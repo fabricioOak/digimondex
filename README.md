@@ -1,5 +1,4 @@
-# digi-api-fabricio
-
+# DigimonDex
 ## Project setup
 ```
 yarn install
