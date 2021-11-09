@@ -18,73 +18,87 @@
         placeholder="Type the digimon name"
         v-model="name"
         clearable
-        @keydown.enter="searchDigimonName(name)"
+        @keydown.enter="getDigimonByName(name)"
       ></v-text-field>
       <v-btn
         color="pink darken-4"
         class="white--text"
-        @click="searchDigimonName(name)"
+        @click="getDigimonByName(name)"
         >Search</v-btn
       >
     </v-card-actions>
-
-    <v-row justify-md="center" align-content-md="center">
-      <v-col
-        v-for="(digi, id) in digimonsByName"
-        :key="id"
-        cols="12"
-        md="6"
-        lg="3"
-        xl="4"
-        sm="1"
-      >
-        <v-card
-          color="pink darken-4"
-          elevation="6"
-          class="white--text mx-auto my-4"
-          width="250"
+    <div v-if="!this.$store.state.loading">
+      <v-row justify-md="center" align-content-md="center">
+        <v-col
+          v-for="(digi, id) in digimonsByName"
+          :key="id"
+          cols="12"
+          md="6"
+          lg="3"
+          xl="4"
+          sm="1"
         >
-          <img :src="digi.img" height="250px" />
-          <v-card-title>Name: {{ digi.name }}</v-card-title>
-          <v-card-subtitle class="white--text"
-            >Level: {{ digi.level }}</v-card-subtitle
+          <v-card
+            color="pink darken-4"
+            elevation="6"
+            class="white--text mx-auto my-4"
+            width="250"
           >
-          <v-card-text>
-            <v-rating
-              color="white"
-              readonly
-              size="18"
-              dense
-              :value="1"
-            ></v-rating>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+            <img :src="digi.img" height="250px" />
+            <v-card-title>Name: {{ digi.name }}</v-card-title>
+            <v-card-subtitle class="white--text"
+              >Level: {{ digi.level }}</v-card-subtitle
+            >
+            <v-card-text>
+              <v-rating
+                color="white"
+                readonly
+                size="18"
+                dense
+                :value="getRatingLevel(digi.level)"
+              ></v-rating>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else>
+      <v-row justify-md="center" align-content-md="center">
+        <h1>Loading...</h1>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import Rating from "../utils/rating";
 
 export default {
   name: "NameSearch",
-
   data() {
     return {
+      rating: "",
       name: "",
+      digimonsByName: [],
     };
   },
-
+  created() {
+    this.getDigimonByName();
+  },
   methods: {
-    checkRating() {
-      console.log(this.digimonsByName[0].level);
+    getDigimonByName() {
+      this.$store
+        .dispatch("getDigimonName", this.name)
+        .then((response) => {
+          this.digimonsByName = response;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
-    searchDigimonName() {
-      this.$store.dispatch("getDigimonName", this.name);
-      this.checkRating();
+    getRatingLevel(data) {
+      return Rating.getRatingLevel(data);
     },
   },
-  computed: mapState(["digimonsByName"]),
 };
 </script>

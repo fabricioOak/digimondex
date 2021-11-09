@@ -10,80 +10,78 @@
       <v-btn color="purple darken-4" class="white--text mx-4" href="/name"
         >Search by name</v-btn
       >
-      <v-btn
-        color="purple darken-4"
-        class="white--text mx-4"
-        @click="getRatingLevel()"
-        >See level</v-btn
-      >
     </v-card-actions>
-    <v-row justify-md="center" align-content-md="center">
-      <v-col
-        v-for="(digi, id) in digimons"
-        :key="id"
-        cols="12"
-        md="4"
-        lg="3"
-        xl="4"
-        sm="6"
-      >
-        <v-card
-          color="grey lighten-3"
-          elevation="6"
-          class="mx-auto my-4"
-          width="250"
+    <div v-if="!this.$store.state.loading">
+      <v-row justify-md="center" align-content-md="center">
+        <v-col
+          v-for="(digi, id) in digimons"
+          :key="id"
+          cols="12"
+          md="4"
+          lg="3"
+          xl="4"
+          sm="6"
         >
-          <v-img width="250" height="250" :src="digi.img"></v-img>
-          <v-card-title>Name: {{ digi.name }}</v-card-title>
-          <v-card-subtitle>Level: {{ digi.level }}</v-card-subtitle>
-          <v-card-text>
-            <v-rating readonly size="18" dense :value="rating"></v-rating>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-card
+            color="grey lighten-3"
+            elevation="6"
+            class="mx-auto my-4"
+            width="250"
+          >
+            <v-img width="250" height="250" :src="digi.img"></v-img>
+            <v-card-title>Name: {{ digi.name }}</v-card-title>
+            <v-card-subtitle>Level: {{ digi.level }}</v-card-subtitle>
+            <v-card-text>
+              <v-rating
+                readonly
+                size="18"
+                dense
+                :value="getRatingLevel(digi.level)"
+              ></v-rating>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <div v-else>
+      <v-row class="mt-8" justify-md="center" align-content-md="center">
+        <h1>Loading...</h1>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import Rating from "../utils/rating";
 
 export default {
+  name: "DigimonList",
   data() {
     return {
-      rating: 0,
-      index: 0,
-      eArr: this.digimons.level,
+      page: 1,
+      rating: "",
+      digimons: [],
+      error: "",
     };
   },
-  name: "DigimonList",
-  mounted() {
-    this.$store.dispatch("getDigimonList");
+  created() {
+    this.getAllDigimons();
   },
   methods: {
-    getRatingLevel() {
-      switch (this.eArr.level) {
-        case "Fresh":
-          this.rating = 0;
-          break;
-        case "In Training":
-          this.rating = 2;
-          break;
-        case "Rookie":
-          this.rating = 3;
-          break;
-        case "Champion":
-          this.rating = 4;
-          break;
-        case "Ultimate":
-          this.rating = 5;
-          break;
-        case "Mega":
-          this.rating = 6;
-      }
-      return this.rating;
+    getAllDigimons() {
+      this.$store
+        .dispatch("getDigimonList")
+        .then((response) => {
+          this.digimons = response;
+          console.log(this.digimons);
+        })
+        .catch((error) => {
+          this.error = error;
+        });
+    },
+    getRatingLevel(data) {
+      return Rating.getRatingLevel(data);
     },
   },
-  computed: mapState(["digimons"]),
 };
 </script>
