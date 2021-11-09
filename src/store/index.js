@@ -9,46 +9,60 @@ export default new Vuex.Store({
     return {};
   },
   state: {
-    digimons: [],
-    digimonsByName: [],
-    digimonsByLevel: []
+    loading: false,
   },
+
   mutations: {
-    SET_ITEMS(state, digimons) {
-      state.digimons = digimons;
+    set_loading(state, isLoading) {
+      state.loading = isLoading;
     },
-    SET_DIGIMON_NAME(state, digimonName) {
-      state.digimonsByName = digimonName;
-    },
-    SET_DIGIMON_LEVEL(state, digimonLevel) {
-      state.digimonsByLevel = digimonLevel;
-    }
   },
+
   actions: {
     getDigimonList({ commit }) {
-      axios
-        .get("https://digimon-api.vercel.app/api/digimon/")
-        .then(response => response.data)
-        .then(digimons => {
-          commit("SET_ITEMS", digimons);
-        });
+      return new Promise((resolve, reject) => {
+        commit("set_loading", true);
+        axios
+          .get("https://digimon-api.vercel.app/api/digimon/")
+          .then(response => {
+            commit("set_loading", false);
+            resolve(response.data);
+          })
+          .catch(error => {
+            commit("set_loading", false);
+            reject(error);
+          });
+      });
     },
     getDigimonName({ commit }, name) {
-      axios
-        .get(`https://digimon-api.vercel.app/api/digimon/name/${name}`)
-        .then(response => response.data)
-        .then(digimonName => {
-          commit("SET_DIGIMON_NAME", digimonName);
-        })
+      return new Promise((resolve, reject) => {
+        commit("set_loading", true);
+        axios
+          .get(`https://digimon-api.vercel.app/api/digimon/name/${name}`)
+          .then(response => {
+            commit("set_loading", false);
+            resolve(response.data);
+          })
+          .catch(error => {
+            commit("set_loading", false);
+            reject(error);
+          });
+      });
     },
     getDigimonLevel({ commit }, level) {
-      axios
-        .get(`https://digimon-api.vercel.app/api/digimon/level/${level}`)
-        .then(response => response.data)
-        .then(digimonLevel => {
-          commit("SET_DIGIMON_LEVEL", digimonLevel);
-        });
-    }
-  },
-  modules: {}
+      return new Promise((resolve, reject) => {
+        commit("set_loading", true);
+        axios
+          .get(`https://digimon-api.vercel.app/api/digimon/level/${level}`)
+          .then(response => {
+            commit("set_loading", false);
+            resolve(response.data);
+          })
+          .catch(error => {
+            commit("set_loading", false);
+            reject(error);
+          });
+      });
+    },
+  }
 });
