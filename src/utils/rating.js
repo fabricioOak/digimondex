@@ -2,22 +2,25 @@ const rating = {
   getRatingLevel(data) {
     switch (data) {
       case "Fresh":
-        return (this.rating = 0);
+        return 0;
 
       case "In Training":
-        return (this.rating = 1);
+        return 1;
 
       case "Rookie":
-        return (this.rating = 2);
+        return 2;
 
       case "Champion":
-        return (this.rating = 3);
+        return 3;
 
       case "Ultimate":
-        return (this.rating = 4);
+        return 4;
 
       case "Mega":
-        return (this.rating = 5);
+        return 5;
+
+      default: return 0;
+
     }
   },
 }
