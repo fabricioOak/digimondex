@@ -4,7 +4,11 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 
+import BaseButton from '@/components/BaseButton.vue'
+
 Vue.config.productionTip = false
+
+Vue.component('BaseButton', BaseButton)
 
 new Vue({
   router,
