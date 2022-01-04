@@ -1,16 +1,19 @@
 <template>
   <v-container>
     <v-card-actions class="justify-center">
-      <v-btn class="mx-4" href="/">Home</v-btn>
-      <v-btn color="pink darken-4" class="white--text mx-4" href="/level"
-        >Search by level</v-btn
-      >
+      <BaseButton text="Home" to="Home" textColor="black--text" />
+      <BaseButton
+        text="Search by level"
+        color="purple darken-4"
+        to="LevelSearch"
+      />
     </v-card-actions>
     <v-card-actions class="justify-center">
       <h1 class="text-uppercase text-xl-h1">
         Search your digimons by their name
       </h1>
     </v-card-actions>
+    <h2 class="text-center" v-show="this.error">{{ this.error }}</h2>
     <v-card-actions class="justify-center">
       <v-text-field
         class="shrink pa-8"
@@ -20,26 +23,17 @@
         clearable
         @keydown.enter="getDigimonByName(name)"
       ></v-text-field>
-      <v-btn
-        color="pink darken-4"
-        class="white--text"
-        @click="getDigimonByName(name)"
-        >Search</v-btn
-      >
+      <BaseButton
+        color="purple darken-4"
+        @event-click="getDigimonByName(name)"
+        text="Search"
+      />
     </v-card-actions>
     <div v-if="!this.$store.state.loading">
       <v-row justify-md="center" align-content-md="center">
-        <v-col
-          v-for="(digi, id) in digimonsByName"
-          :key="id"
-          cols="12"
-          md="6"
-          lg="3"
-          xl="4"
-          sm="1"
-        >
+        <v-col v-for="(digi, id) in digimonsByName" :key="id" cols="12">
           <v-card
-            color="pink darken-4"
+            color="purple darken-4"
             elevation="6"
             class="white--text mx-auto my-4"
             width="250"
@@ -79,11 +73,9 @@ export default {
     return {
       rating: "",
       name: "",
+      error: "",
       digimonsByName: [],
     };
-  },
-  created() {
-    this.getDigimonByName();
   },
   methods: {
     getDigimonByName() {
@@ -91,9 +83,11 @@ export default {
         .dispatch("getDigimonName", this.name)
         .then((response) => {
           this.digimonsByName = response;
+          this.error = "";
         })
         .catch((error) => {
-          console.log(error);
+          this.error = error.response.data.ErrorMsg;
+          console.log(this.error);
         });
     },
     getRatingLevel(data) {

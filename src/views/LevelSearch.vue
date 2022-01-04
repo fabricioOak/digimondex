@@ -1,10 +1,8 @@
 <template>
   <v-container>
     <v-card-actions class="justify-center">
-      <v-btn class="mx-4" href="/">Home</v-btn>
-      <v-btn color="purple darken-4" class="white--text mx-4" href="/name"
-        >Search by name</v-btn
-      >
+      <BaseButton text="Home" to="Home" textColor="black--text" />
+      <BaseButton text="Search by name" color="pink darken-4" to="NameSearch" />
     </v-card-actions>
     <v-card-actions class="justify-center">
       <h1 class="text-uppercase text-xl-h1">
@@ -12,36 +10,33 @@
       </h1>
     </v-card-actions>
     <v-card-actions class="justify-center">
-      <v-text-field
+      <v-select
+        :items="levels"
         class="shrink pa-8"
         label="Digimon Level"
         placeholder="Type the digimon level"
         v-model="level"
         clearable
         elevation-2
-        @keydown.enter="getDigimonByLevel(level)"
-      ></v-text-field>
-      <v-btn
-        color="purple darken-4"
-        class="white--text"
-        @click="getDigimonByLevel(level)"
-      >
-        Buscar
-      </v-btn>
+      ></v-select>
+      <BaseButton
+        color="pink darken-4"
+        @event-click="getDigimonByLevel()"
+        text="Search"
+      />
     </v-card-actions>
     <div v-if="!this.$store.state.loading">
-      <v-row justify-md="center" align-content-md="center">
+      <v-row justify="center" align-content="center">
         <v-col
           v-for="(digi, id) in digimonsByLevel"
           :key="id"
-          cols="12"
           md="4"
           lg="3"
           xl="4"
           sm="4"
         >
           <v-card
-            color="purple darken-4"
+            color="pink darken-4"
             elevation="6"
             class="white--text mx- my-4"
             width="250"
@@ -76,12 +71,18 @@ export default {
     return {
       rating: "",
       level: "",
+      levels: [
+        "Fresh",
+        "In Training",
+        "Rookie",
+        "Champion",
+        "Ultimate",
+        "Mega",
+      ],
       digimonsByLevel: [],
     };
   },
-  created() {
-    this.getDigimonsByLevel();
-  },
+
   methods: {
     getDigimonByLevel() {
       this.$store
