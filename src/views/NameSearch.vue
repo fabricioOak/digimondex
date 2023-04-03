@@ -32,27 +32,7 @@
     <div v-if="!this.$store.state.loading">
       <v-row justify-md="center" align-content-md="center">
         <v-col v-for="(digi, id) in digimonsByName" :key="id" cols="12">
-          <v-card
-            color="purple darken-4"
-            elevation="6"
-            class="white--text mx-auto my-4"
-            width="250"
-          >
-            <img :src="digi.img" height="250px" />
-            <v-card-title>Name: {{ digi.name }}</v-card-title>
-            <v-card-subtitle class="white--text"
-              >Level: {{ digi.level }}</v-card-subtitle
-            >
-            <v-card-text>
-              <v-rating
-                color="white"
-                readonly
-                size="18"
-                dense
-                :value="getRatingLevel(digi.level)"
-              ></v-rating>
-            </v-card-text>
-          </v-card>
+          <BaseCard :digimon="digi" />
         </v-col>
       </v-row>
     </div>
@@ -65,9 +45,11 @@
 </template>
 
 <script>
-import Rating from "../utils/rating";
 
 export default {
+  components: {
+    BaseCard: () => import("../components/BaseCard.vue"),
+  },
   name: "NameSearch",
   data() {
     return {
@@ -84,14 +66,12 @@ export default {
         .then((response) => {
           this.digimonsByName = response;
           this.error = "";
+          console.log(response)
         })
         .catch((error) => {
           this.error = error.response.data.ErrorMsg;
           console.log(this.error);
         });
-    },
-    getRatingLevel(data) {
-      return Rating.getRatingLevel(data);
     },
   },
 };

@@ -35,27 +35,7 @@
           xl="4"
           sm="4"
         >
-          <v-card
-            color="pink darken-4"
-            elevation="6"
-            class="white--text mx- my-4"
-            width="250"
-          >
-            <img :src="digi.img" height="250px" />
-            <v-card-title>Name: {{ digi.name }}</v-card-title>
-            <v-card-subtitle class="white--text"
-              >Level: {{ digi.level }}</v-card-subtitle
-            >
-            <v-card-text>
-              <v-rating
-                color="white"
-                readonly
-                size="18"
-                dense
-                :value="getRatingLevel(digi.level)"
-              ></v-rating>
-            </v-card-text>
-          </v-card>
+          <BaseCard :digimon="digi"/>
         </v-col>
       </v-row>
     </div>
@@ -66,6 +46,9 @@
 import Rating from "../utils/rating";
 
 export default {
+  components: {
+    BaseCard: () => import("../components/BaseCard.vue"),
+  },
   name: "LevelSearch",
   data() {
     return {
